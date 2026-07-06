@@ -8,6 +8,7 @@ import type { SitePost } from '@/lib/site-connector'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { EditableArticleComments } from '@/editable/components/EditableArticleComments'
 import { getTaskTheme, taskThemeStyle } from '@/editable/theme/task-themes'
+import { Ads } from '@/lib/ads'
 
 export const revalidate = 3
 
@@ -183,9 +184,17 @@ function Kicker({ task, children }: { task: TaskKey; children: React.ReactNode }
 function BackLink({ task }: { task: TaskKey }) {
   const taskConfig = getTaskConfig(task)
   return (
-    <Link href={taskConfig?.route || '/'} className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--tk-muted)] transition hover:text-[var(--tk-text)]">
+    <Link href={taskConfig?.route || '/'} className="inline-flex items-center gap-1.5 rounded border border-[var(--tk-line)] bg-white px-4 py-2 text-sm font-extrabold text-[var(--tk-muted)] transition hover:border-[var(--tk-accent)] hover:text-[var(--tk-accent)]">
       <ArrowLeft className="h-4 w-4" /> Back to {taskConfig?.label || 'posts'}
     </Link>
+  )
+}
+
+function DetailAd({ slot }: { slot: 'sidebar' | 'article-bottom' | 'footer' }) {
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-6">
+      <Ads slot={slot} showLabel eager className="mx-auto w-full" />
+    </div>
   )
 }
 
@@ -194,17 +203,20 @@ function ArticleDetail({ post, related, comments }: { post: SitePost; related: S
   const images = getImages(post)
   return (
     <>
-      <article className="mx-auto max-w-4xl px-6 py-14 sm:py-20">
+      <article className="mx-auto max-w-[var(--editable-container)] px-4 py-5 sm:px-6 lg:px-8">
+        <div className="bg-white px-6 py-8 sm:px-10 lg:px-14">
         <BackLink task="article" />
-        <p className="mt-10 text-xs font-medium uppercase tracking-[0.28em] text-[var(--tk-accent)]">{categoryOf(post, 'Article')}</p>
-        <h1 className="editable-display mt-5 text-balance text-4xl font-semibold leading-[1.06] tracking-[-0.03em] sm:text-5xl lg:text-[3.4rem]">{post.title}</h1>
-        <div className="mt-6 text-sm text-[var(--tk-muted)]">
+        <p className="mt-10 text-xs font-extrabold uppercase tracking-normal text-[var(--tk-accent)]">{categoryOf(post, 'Article')}</p>
+        <h1 className="mt-5 text-balance text-4xl font-extrabold leading-tight tracking-normal text-[var(--tk-accent)] sm:text-5xl lg:text-[3.4rem]">{post.title}</h1>
+        <div className="mt-6 text-sm font-semibold text-[var(--tk-muted)]">
           <span>{SITE_CONFIG.name}</span>
         </div>
-        {images[0] ? <img src={images[0]} alt="" className="mt-10 aspect-[16/9] w-full rounded-[var(--tk-radius)] border border-[var(--tk-line)] object-cover" /> : null}
+        {images[0] ? <img src={images[0]} alt="" className="mt-10 aspect-[16/9] w-full rounded border border-[var(--tk-line)] object-cover" /> : null}
         <BodyContent post={post} />
         <EditableArticleComments slug={post.slug} comments={comments} />
+        </div>
       </article>
+      <DetailAd slot="article-bottom" />
       <RelatedStrip task="article" related={related} />
     </>
   )
@@ -241,6 +253,7 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
           <ImageStrip images={images.slice(1)} label="Showcase" />
         </article>
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+          <DetailAd slot="sidebar" />
           {mapSrc ? <MapBox src={mapSrc} label={address || post.title} /> : null}
           <ContactAction website={website} phone={phone} email={email} />
           <RelatedPanel task="listing" post={post} related={related} />
@@ -412,6 +425,7 @@ function ProfileDetail({ post, related }: { post: SitePost; related: SitePost[] 
           </article>
         </div>
       </section>
+      <DetailAd slot="footer" />
       <RelatedStrip task="profile" related={related} />
     </>
   )
@@ -425,7 +439,7 @@ function Divider() {
 function BodyContent({ post, compact = false }: { post: SitePost; compact?: boolean }) {
   return (
     <div
-      className={`article-content mt-8 max-w-none text-[var(--tk-text)] ${compact ? 'text-[15px] leading-7' : 'text-[1.0625rem] leading-8'}`}
+      className={`article-content mt-8 max-w-none rounded border border-[var(--tk-line)] bg-white p-6 text-[var(--tk-text)] ${compact ? 'text-[15px] leading-7' : 'text-[1.0625rem] leading-8'}`}
       dangerouslySetInnerHTML={{ __html: formatPlainText(getBody(post)) }}
     />
   )
@@ -494,7 +508,7 @@ function BadgeLine({ label, value }: { label: string; value: string }) {
   )
 }
 
-function RelatedPanel({ task, post, related }: { task: TaskKey; post: SitePost; related: SitePost[] }) {
+function RelatedPanel({ task, post: _post, related }: { task: TaskKey; post: SitePost; related: SitePost[] }) {
   const taskConfig = getTaskConfig(task)
   return (
     <div className="space-y-6">
@@ -524,10 +538,10 @@ function RelatedStrip({ task, related }: { task: TaskKey; related: SitePost[] })
   if (!related.length) return null
   const taskConfig = getTaskConfig(task)
   return (
-    <section className="border-t border-[var(--tk-line)]">
+    <section className="border-t border-[var(--tk-line)] bg-[#eef0f5]">
       <div className="mx-auto max-w-[var(--editable-container)] px-6 py-14 sm:py-16 lg:px-8">
         <div className="flex items-center justify-between">
-          <h2 className="editable-display text-2xl font-semibold tracking-[-0.02em]">More {(taskConfig?.label || 'posts').toLowerCase()}</h2>
+          <h2 className="text-2xl font-extrabold tracking-normal text-[var(--tk-accent)]">More {(taskConfig?.label || 'posts').toLowerCase()}</h2>
           <Link href={taskConfig?.route || '/'} className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--tk-accent)]">View all <ArrowUpRight className="h-4 w-4" /></Link>
         </div>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

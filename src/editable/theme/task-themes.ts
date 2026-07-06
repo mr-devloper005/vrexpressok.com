@@ -32,34 +32,34 @@ export type TaskTheme = {
   radius: string
 }
 
-const YELP_FONT = "'Inter', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif"
+const COMMUNITY_FONT = "'Inter', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif"
 
 // Shared Yelp palette — every task inherits this; only kicker/note differ.
 const base = {
   dark: false,
-  fontDisplay: YELP_FONT,
-  fontBody: YELP_FONT,
-  bg: '#ffffff',
+  fontDisplay: COMMUNITY_FONT,
+  fontBody: COMMUNITY_FONT,
+  bg: '#eef0f5',
   surface: '#ffffff',
-  raised: '#f7f7f7',
-  text: '#1a1a1a',
-  muted: '#6b6b6b',
-  line: '#e6e6e6',
-  accent: '#d32323',
-  accentSoft: '#fdecec',
+  raised: '#f4f2f2',
+  text: '#071421',
+  muted: '#657282',
+  line: '#dde3ea',
+  accent: '#20a85d',
+  accentSoft: '#dff5e9',
   onAccent: '#ffffff',
-  glow: 'rgba(211,35,35,0.06)',
-  radius: '0.75rem',
+  glow: 'rgba(33,94,97,0.12)',
+  radius: '0.25rem',
 } satisfies Omit<TaskTheme, 'kicker' | 'note'>
 
 export const taskThemes: Record<TaskKey, TaskTheme> = {
-  article: { ...base, kicker: 'Articles', note: 'In-depth reads, guides and stories worth your time.' },
-  listing: { ...base, kicker: 'Businesses', note: 'Find, compare and connect with local businesses.' },
-  classified: { ...base, kicker: 'Marketplace', note: 'Fresh offers and listings, ready to act on.' },
-  image: { ...base, kicker: 'Photos', note: 'A visual feed of standout images and galleries.' },
-  sbm: { ...base, kicker: 'Bookmarks', note: 'Curated resources and links worth saving.' },
-  pdf: { ...base, kicker: 'Documents', note: 'Downloadable guides, reports and references.' },
-  profile: { ...base, kicker: 'People', note: 'Discover creators, businesses and profiles.' },
+  article: { ...base, kicker: 'Forums', note: 'Useful threads, field notes, and practical ideas from the community.' },
+  listing: { ...base, kicker: 'Member Albums', note: 'Browse businesses, profiles, and work shared by members.' },
+  classified: { ...base, kicker: 'Opportunities', note: 'Current requests, offers, and openings from active members.' },
+  image: { ...base, kicker: 'Recent Images', note: 'A visual stream of new work, places, products, and moments.' },
+  sbm: { ...base, kicker: 'Site Help Board', note: 'Saved resources and helpful references from across the site.' },
+  pdf: { ...base, kicker: 'Learn', note: 'Guides, documents, and downloadable references for practical use.' },
+  profile: { ...base, kicker: 'Members', note: 'Profiles and people behind the posts, albums, and discussions.' },
 }
 
 export function getTaskTheme(task: TaskKey): TaskTheme {
